@@ -1,25 +1,17 @@
-'use strict'
+"use strict";
 
-var handlers = require('../handlers')
-
+var handlers = require("../handlers");
 var routes = [
   {
-    method: 'POST',
-    path: '/{path*}',
-    handler: handlers.handleUpload,
-    config: {
-      payload: {
-        output: 'stream',
-        parse: true,
-        allow: 'multipart/form-data'
-      }
-    }
+    method: "POST",
+    path: "/{path*}",
+    handler: handlers.handleUpload
   },
   {
-    method: 'GET',
-    path: '/',
+    method: "GET",
+    path: "/",
     handler: handlers.showFrontpage
   }
-]
+];
 
-module.exports = routes
+module.exports = routes;
