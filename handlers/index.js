@@ -18,6 +18,7 @@ module.exports.handleUpload = async (request, reply) => {
   delete data.destination
   delete data.filename
   const templateId = data.templateId
+  delete data.templateId
   const fileNameTempOriginal = await getTemplatePath(templateId)
   var temporaryName = uuid.v4()
   var pathPre = process.cwd() + '/uploads/' + temporaryName
@@ -27,7 +28,6 @@ module.exports.handleUpload = async (request, reply) => {
   if (err) {
     reply(err)
   } else {
-    delete data.templateId
     const options = {
       template: {
         filePath: fileNameTempOriginal,
