@@ -47,8 +47,8 @@ module.exports.handleUpload = async (request, reply) => {
               if (err) {
                 reply(err)
               } else {
-                const { link } = await uploadToGCS(fileNameTempPdfConverted)
-                reply({ link }).on('finish', async () => {
+                await uploadToGCS(fileNameTempPdfConverted)
+                reply({ success: true }).on('finish', async () => {
                   fs.unlink(fileNameTempOriginal)
                   fs.unlink(fileNameTempConverted)
                   fs.unlink(fileNameTempPdfConverted)
