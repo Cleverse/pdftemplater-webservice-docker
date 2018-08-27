@@ -14,6 +14,9 @@ module.exports.showFrontpage = (request, reply) => {
 
 module.exports.handleUpload = async (request, reply) => {
   var data = request.payload
+  const { destination, filename } = data
+  delete data.destination
+  delete data.filename
   const templateId = data.templateId
   const fileNameTempOriginal = await getTemplatePath(templateId)
   var temporaryName = uuid.v4()
@@ -47,7 +50,7 @@ module.exports.handleUpload = async (request, reply) => {
               if (err) {
                 reply(err)
               } else {
-                await uploadToGCS(fileNameTempPdfConverted)
+                await uploadToGCS(fileNameTempPdfConverted, destination, filename)
                 reply({ success: true }).on('finish', async () => {
                   fs.unlink(fileNameTempOriginal)
                   fs.unlink(fileNameTempConverted)
