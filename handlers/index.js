@@ -22,50 +22,42 @@ module.exports.handleUpload = async (request, reply) => {
   var fileNameTempPdfConverted = pathPre + '.formatted.pdf'
   var file = fs.createWriteStream(fileNameTempOriginal)
 
-  file.on('error', function (error) {
-    reply(error)
-  })
-
-  data.file.pipe(file)
-
-  file.on('finish', function (err) {
-    if (err) {
-      reply(err)
-    } else {
-      delete data.templateId
-      const options = {
-        template: {
-          filePath: fileNameTempOriginal,
-          data: data
-        },
-        save: {
-          filePath: fileNameTempConverted
-        }
+  if (err) {
+    reply(err)
+  } else {
+    delete data.templateId
+    const options = {
+      template: {
+        filePath: fileNameTempOriginal,
+        data: data
+      },
+      save: {
+        filePath: fileNameTempConverted
       }
-      generateDocx(options, function (err, result) {
-        if (err) {
-          reply(err)
-        } else {
-          unoconv.convert(fileNameTempConverted, 'pdf', function (err, result) {
-            if (err) {
-              reply(err)
-            } else {
-              fs.writeFile(fileNameTempPdfConverted, result, async function (err) {
-                if (err) {
-                  reply(err)
-                } else {
-                  const { link } = await uploadToGCS(fileNameTempPdfConverted)
-                  reply({ link }).on('finish', async () => {
-                    fs.unlink(fileNameTempOriginal)
-                    fs.unlink(fileNameTempConverted)
-                    fs.unlink(fileNameTempPdfConverted)
-                  })
-                }
-              })
-            }
-          })
-        }
-      })
     }
-  })
+    generateDocx(options, function (err, result) {
+      if (err) {
+        reply(err)
+      } else {
+        unoconv.convert(fileNameTempConverted, 'pdf', function (err, result) {
+          if (err) {
+            reply(err)
+          } else {
+            fs.writeFile(fileNameTempPdfConverted, result, async function (err) {
+              if (err) {
+                reply(err)
+              } else {
+                await uploadToGCS(fileNameTempPdfConverted)
+                reply({ success: true }).on('finish', async () => {
+                  fs.unlink(fileNameTempOriginal)
+                  fs.unlink(fileNameTempConverted)
+                  fs.unlink(fileNameTempPdfConverted)
+                })
+              }
+            })
+          }
+        })
+      }
+    })
+  }
 }
