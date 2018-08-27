@@ -7,7 +7,7 @@ const templateBucket = storage.bucket(Config.GCS_TEMPLATE_BUCKET_NAME);
 
 module.exports.uploadToGCS = async (pdfPath, destination, filename) => {
     const storageBucket = storage.bucket(Config.GCS_STORAGE_BUCKET_NAME)
-    await storageBucket.upload(pdfPath, {
+    const result = await storageBucket.upload(pdfPath, {
         destination: path.join(destination, filename),
         gzip: true,
         metadata: {
