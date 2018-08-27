@@ -23,7 +23,6 @@ module.exports.handleUpload = async (request, reply) => {
   var pathPre = process.cwd() + '/uploads/' + temporaryName
   var fileNameTempConverted = pathPre + '.formatted.docx'
   var fileNameTempPdfConverted = pathPre + '.formatted.pdf'
-  var file = fs.createWriteStream(fileNameTempOriginal)
 
   if (err) {
     reply(err)
